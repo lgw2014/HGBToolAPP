@@ -12,6 +12,7 @@
 
 #import "HGBEncryptTool.h"
 
+
 @interface HGBEncryptViewController ()
 /**
  数据源
@@ -65,7 +66,7 @@
     self.tableView.delegate=self;
     self.tableView.separatorStyle=UITableViewCellSeparatorStyleNone;
     [self.view addSubview:self.tableView];
-    self.dataDictionary=@{@"加密工具:(本工具包含AES,DES,RSA,TTAlgorithmSM4,MD2/3/5,sha1/256/126..,Sign,Hash,Base64)":@[@"特殊字符编码",@"Base64",@"MD5",@"sha",@"hash",@"AES",@"DES",@"TTAlgorithmSM4",@"RSA",@"RSA反向",@"Sign"]};
+    self.dataDictionary=@{@"加密工具:(本工具包含AES,DES,RSA,TTAlgorithmSM4,MD2/3/5,sha1/256/126..,Sign,Hash,Base64)":@[@"特殊字符编码",@"Base64",@"MD5",@"sha",@"hash",@"AES",@"3DES",@"TTAlgorithmSM4",@"RSA",@"RSA反向",@"Sign",@"DES"]};
     self.keys=@[@"加密工具:(本工具包含AES,DES,RSA,TTAlgorithmSM4,MD2/3/5,sha1/256/126..,Sign,Hash,Base64)"];
 
     [self.tableView registerClass:[HGBCommonSelectCell class] forCellReuseIdentifier:Identify_Cell];
@@ -146,15 +147,16 @@
             string=[HGBEncryptTool hashStringFromJsonObject:string andWithSalt:key];
             NSLog(@"hash-encrypt:%@",string);
         }else if (indexPath.row==5){
-            string=[HGBEncryptTool encryptStringWithAES256:string andWithKey:key];
+            string=[HGBEncryptTool encryptStringWithAES128:string andWithKey:key];
             NSLog(@"aes256-encrypt:%@",string);
-            string=[HGBEncryptTool decryptStringWithAES256:string andWithKey:key];
+            string=[HGBEncryptTool decryptStringWithAES128:string andWithKey:key];
             NSLog(@"aes256-decrypt:%@",string);
         }else if (indexPath.row==6){
-            string=[HGBEncryptTool encryptStringWithDES3:string andWithKey:key];
+            string=[HGBEncryptTool encryptStringWithDES:string andWithKey:key];
             NSLog(@"DES-encrypt:%@",string);
-            string=[HGBEncryptTool decryptStringWithDES3:string andWithKey:key];
+            string=[HGBEncryptTool decryptStringWithDES:string andWithKey:key];
             NSLog(@"DES-decrypt:%@",string);
+
         }else if (indexPath.row==7){
             string=[HGBEncryptTool encryptStringWithTTAlgorithmSM4_ECB:string andWithKey:key];
             NSLog(@"TTAlgorithmSM4_ECB-encrypt:%@",string);
@@ -176,8 +178,6 @@
             NSLog(@"RSA反向-encrypt:%@",string);
             string=[HGBEncryptTool decryptStringWithReverseRSA:string andWithPublicKeyPath:pubPath];
             NSLog(@"RSA反向-decrypt:%@",string);
-        }else if (indexPath.row==10){
-
         }
     }
 }

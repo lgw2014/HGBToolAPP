@@ -8,6 +8,7 @@
 
 #import "HGBNetWorkViewController.h"
 
+
 #import "HGBCommonSelectCell.h"
 #define Identify_Cell @"cell"
 
@@ -66,7 +67,7 @@
     self.tableView.delegate=self;
     self.tableView.separatorStyle=UITableViewCellSeparatorStyleNone;
     [self.view addSubview:self.tableView];
-    self.dataDictionary=@{@"网络请求工具:":@[@"post",@"get",@"upload",@"download"]};
+    self.dataDictionary=@{@"网络请求工具:":@[@"post",@"get",@"upload",@"download",@"批量文件上传",@"https-test"]};
     self.keys=@[@"网络请求工具:"];
 
     [self.tableView registerClass:[HGBCommonSelectCell class] forCellReuseIdentifier:Identify_Cell];
@@ -141,6 +142,25 @@
         }else if (indexPath.row==3){
             [[HGBNetWorkTool shareInstance] downLoadFileWithURL:@"http://120.24.47.57/amap/down/8c128ce4-2e29-44e3-8ea5-17706adc706d/1506652122930.ipa" andWithStoreFile:@"document://1.ipa" andWithCompleteBlock:^(BOOL status, NSDictionary *returnMessage) {
                 NSLog(@"%@",returnMessage);
+            }];
+        }else if (indexPath.row==4){
+
+            NSData *fileData1=[[NSData alloc]initWithContentsOfFile:[[NSBundle mainBundle]pathForResource:@"xychannel" ofType:@"cer"]];
+             NSData *fileData2=[[NSData alloc]initWithContentsOfFile:[[NSBundle mainBundle]pathForResource:@"csr" ofType:@"crt"]];
+            [[HGBNetWorkTool shareInstance]uploadFilesWithUrl:@"http://192.168.1.107:8081/file_upload" andWithFileItems:@{@"file1":fileData1,@"file2":fileData2} andWithSuccessBlock:^(id responseObject) {
+                NSString *string=[[NSString alloc]initWithData:responseObject encoding:NSUTF8StringEncoding];
+                NSLog(@"%@",string);
+            } failedBlock:^(NSError *error) {
+                NSLog(@"%@",error);
+            }];
+        }else if (indexPath.row==5){
+            
+            [HGBNetWorkTool shareInstance].cerFilePath=@"project://csr.crt";
+            [[HGBNetWorkTool shareInstance] post:@"https://192.168.188.120:8091/manifest.plist" params:nil andWithSuccessBlock:^(id responseObject) {
+                NSString *string=[[NSString alloc]initWithData:responseObject encoding:NSUTF8StringEncoding];
+                NSLog(@"%@",string);
+            } failedBlock:^(NSError *error) {
+                NSLog(@"%@",error);
             }];
         }
     }

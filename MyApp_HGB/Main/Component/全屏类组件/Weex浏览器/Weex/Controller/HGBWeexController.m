@@ -160,6 +160,9 @@
         if(self.baseUrlString){
             baseUrl=[NSURL URLWithString:self.baseUrlString];
         }
+        if (baseUrl==nil) {
+            baseUrl=[NSURL URLWithString:@""];
+        }
 
         [_instance renderView:string options:@{@"bundleUrl":[[baseUrl absoluteString] stringByDeletingLastPathComponent]} data:[string dataUsingEncoding:NSUTF8StringEncoding]];
 
@@ -316,8 +319,9 @@
         return NO;
     }
     if(![self isURL:url]){
-        return nil;
+        return NO;
     }
+     url=[self urlAnalysis:url];
     if(![url containsString:@"://"]){
         url=[[NSURL fileURLWithPath:url]absoluteString];
     }
@@ -445,6 +449,14 @@
     }
     return url;
 }
-
+#pragma mark setter
+-(void)setIsShowReturnButton:(BOOL)isShowReturnButton{
+    _isShowReturnButton=isShowReturnButton;
+    if(_isShowReturnButton){
+        self.actionButton.hidden=NO;
+    }else{
+        self.actionButton.hidden=YES;
+    }
+}
 @end
 

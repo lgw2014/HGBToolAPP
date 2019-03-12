@@ -196,7 +196,7 @@
     [self.view addSubview:self.actionButton];
     UIPanGestureRecognizer *pan=[[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(panHandler:)];
     [self.actionButton addGestureRecognizer:pan];
-    if(self.isShowReturnButton){
+    if(_isShowReturnButton){
         self.actionButton.hidden=NO;
     }else{
         self.actionButton.hidden=YES;
@@ -312,8 +312,9 @@
         return NO;
     }
     if(![self isURL:url]){
-        return nil;
+        return NO;
     }
+     url=[self urlAnalysis:url];
     if(![url containsString:@"://"]){
         url=[[NSURL fileURLWithPath:url]absoluteString];
     }
@@ -440,6 +441,15 @@
         url=[[NSURL fileURLWithPath:url]absoluteString];
     }
     return url;
+}
+#pragma mark setter
+-(void)setIsShowReturnButton:(BOOL)isShowReturnButton{
+    _isShowReturnButton=isShowReturnButton;
+    if(_isShowReturnButton){
+        self.actionButton.hidden=NO;
+    }else{
+        self.actionButton.hidden=YES;
+    }
 }
 
 #pragma mark 状态栏

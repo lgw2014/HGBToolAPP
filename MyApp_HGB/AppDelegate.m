@@ -8,21 +8,29 @@
 
 #import "AppDelegate.h"
 
+
+#import "AppDelegate+HGBLog.h"
 #import "AppDelegate+HGBDataBase.h"
 #import "AppDelegate+HGBSEDataBase.h"
 #import "AppDelegate+HGBPush.h"
-#import "AppDelegate+HGBPurchaseTool.h"
+#import "AppDelegate+HGBPurchase.h"
 
 #import "AppDelegate+HGBBaiduMap.h"
 #import "AppDelegate+HGBUMengAnalytics.h"
 #import "AppDelegate+HGBWeex.h"
-#import "AppDelegate+HGBWChatShare.h"
+
 #import "AppDelegate+HGBUMShare.h"
 #import "AppDelegate+HGBAppCheck.h"
 #import "HGBRootViewController.h"
 #import "AppDelegate+HGBException.h"
 #import "AppDelegate+HGB3DTouch.h"
 #import "AppDelegate+HGBURLProtocol.h"
+#import "AppDelegate+HGBSELog.h"
+
+
+#define UIApplicationOpenURLNotification @"openURL"
+#define UIApplicationHandleOpenURLNotification @"handleOpenURL"
+
 
 @interface AppDelegate ()
 
@@ -32,6 +40,9 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    //日志
+//    [self init_Log_ServerWithOptions:launchOptions];
+    [self init_SELog_ServerWithOptions:launchOptions];
     //数据库初始化
     [self init_DataBase_ServerWithOptions:launchOptions];
     //SE数据库初始化
@@ -55,8 +66,7 @@
     [self init_BaiduMap_ServerWithBaiduMapAppKey:@"fEH1pg9fLuIHZ6ubiyAhEHfNaKkrwHei" andWithLaunchOptions:launchOptions];
     //友盟统计
     [self init_UMengAnalytics_ServerWithUMengAnalyticsAppKey:@"59df2c8b82b6356c4b00006f" andWithLaunchOptions:launchOptions];
-    //微信分享
-    [self init_WChatShare_ServerWithWChatShareAppKey:nil andWithLaunchOptions:launchOptions];
+
     //友盟分享
     [self init_UMShare_ServerWithLaunchOptions:launchOptions];
     
@@ -95,17 +105,20 @@
 - (void)applicationWillTerminate:(UIApplication *)application {
     
 }
-#pragma mark url
-- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<NSString *,id> *)options
+-(BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url
 {
-    //    NSLog(@"%@",options);
-    return [self applicationOpenURL:url];
+    [[NSNotificationCenter defaultCenter]postNotificationName:UIApplicationHandleOpenURLNotification object:self userInfo:@{@"url":url}];
+    return YES;
 }
--(BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url{
-    return [self applicationOpenURL:url];
+
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation{
+    [[NSNotificationCenter defaultCenter]postNotificationName:UIApplicationOpenURLNotification object:self userInfo:@{@"url":url}];
+    return YES;
 }
--(BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation{
-    return [self applicationOpenURL:url];
+
+-(BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options{
+    [[NSNotificationCenter defaultCenter]postNotificationName:UIApplicationOpenURLNotification object:self userInfo:@{@"url":url}];
+    return  YES;
 }
 
 @end
